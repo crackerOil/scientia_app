@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:scientia_app/services/load_data.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class Article extends StatefulWidget {
   final String src;
@@ -27,8 +27,11 @@ class _ArticleState extends State<Article> {
   final String title;
   final CachedNetworkImage? img;
   final int index;
+
   late String articleDetails;
   String? articleHtml;
+
+  List<YoutubePlayerController> videoControllers = [];
 
   _ArticleState(this.src, this.title, this.img, this.index);
 
@@ -41,7 +44,7 @@ class _ArticleState extends State<Article> {
 
     // handle details in case author or category are left null
     articleDetails =
-        "<div>${author != null ? author : ''}<br />${category != null ? category : ''}</div>";
+        "<div>${author ?? ''}<br />${category ?? ''}</div>";
 
     if (mounted) {
       setState(() {});
@@ -51,15 +54,27 @@ class _ArticleState extends State<Article> {
   @override
   void initState() {
     super.initState();
+
     loadArticleText();
+  }
+
+  @override
+  void dispose() {
+    if (videoControllers.isNotEmpty) {
+      videoControllers.forEach((controller) {
+        controller.dispose();
+      });
+    }
+
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backwardsCompatibility: false,
-        systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.white),
+        // backwardsCompatibility: false,
+        // systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.white),
         iconTheme: IconThemeData(color: Colors.black),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -122,9 +137,36 @@ class _ArticleState extends State<Article> {
                       endIndent: 10,
                     ),
                     // TODO: make links work
-                    // TODO: fix videos
+                    // TODO: improve videos (later)
                     Html(
                       data: articleHtml,
+                      customRender: {
+                        "iframe": (context, child) {
+                          YoutubePlayerController _controller = YoutubePlayerController(
+                              initialVideoId: YoutubePlayer.convertUrlToId(
+                                  context.tree.element!.attributes["src"]!
+                              )!,
+                              flags: YoutubePlayerFlags(
+                                autoPlay: false,
+                              )
+                          );
+                          videoControllers.add(_controller);
+
+                          return YoutubePlayer(
+                            controller: _controller,
+                            showVideoProgressIndicator: true,
+                            bottomActions: <Widget>[
+                              const SizedBox(width: 10),
+                              CurrentPosition(),
+                              const SizedBox(width: 10),
+                              ProgressBar(isExpanded: true),
+                              const SizedBox(width: 10),
+                              RemainingDuration(),
+                              const SizedBox(width: 10)
+                            ],
+                          );
+                        }
+                      },
                       customImageRenders: {
                         // prefix relative paths with base url
                         (attr, _) =>

@@ -30,8 +30,7 @@ class LoadData {
     return {'titles': titles, 'imgSrcs': imgSrcs, 'articleSrcs': articleSrcs};
   }
 
-  static Future<List<String?>> loadArticle(
-      {required String src, required bool hasImg}) async {
+  static Future<List<String?>> loadArticle({required String src, required bool hasImg}) async {
     http.Response response = await http.get(Uri.parse(src));
 
     dom.Document document = parse(response.body);
@@ -42,7 +41,7 @@ class LoadData {
         .firstWhere(
             (element) => element.attributes["itemprop"] == "articleBody");
 
-    // print(articleBody.innerHtml);
+    // print(articleBody.children);
 
     dom.Element? author;
     try {

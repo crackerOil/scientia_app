@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -66,8 +65,8 @@ class _HomeState extends State<Home> {
 
     return Scaffold(
         appBar: AppBar(
-          backwardsCompatibility: false,
-          systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.white),
+          // backwardsCompatibility: false,
+          // systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.white),
           iconTheme: IconThemeData(color: Colors.black),
           leading: IconButton(
             icon: Icon(Icons.menu_outlined),

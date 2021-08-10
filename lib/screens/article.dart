@@ -36,8 +36,12 @@ class _ArticleState extends State<Article> {
   _ArticleState(this.src, this.title, this.img, this.index);
 
   void loadArticleText() async {
-    List<String?> article =
-        await LoadData.loadArticle(src: src, hasImg: (img != null));
+    List<String?>? article;
+
+    while (article == null) {
+      article = await LoadData.loadArticle(src: src, hasImg: (img != null));
+    }
+
     String? author = article[0];
     String? category = article[1];
     articleHtml = article[2];
@@ -73,9 +77,6 @@ class _ArticleState extends State<Article> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // backwardsCompatibility: false,
-        // systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.white),
-        iconTheme: IconThemeData(color: Colors.black),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [

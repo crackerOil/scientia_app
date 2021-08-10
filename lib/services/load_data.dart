@@ -4,12 +4,30 @@ import 'package:html/parser.dart';
 import 'package:html/dom.dart' as dom;
 
 class LoadData {
-  static Future<Map<String, List<String?>>> loadArticlePage(
-      {required int pageNumber}) async {
-    // TODO: add category functionality
+  static Future<Map<String, List<String?>>?> loadArticlePage({
+    required int pageNumber,
+    required int category
+  }) async {
+    String pageUrl = "https://scientia.ro/";
 
-    http.Response response = await http.get(Uri.parse(
-        "https://scientia.ro/?start=${pageNumber * 28}&type=rss&format=feed"));
+    List<String> categoryUrls = [
+      "", "stiri-stiinta.html", "tehnologie.html",
+      "fizica.html", "univers.html", "biologie.html",
+      "homo-humanus.html", "blogurile-scientia.html"
+    ];
+    List<int> categoryPageLengths = [28, 15, 20, 20, 20, 20, 20, 25];
+
+    pageUrl += categoryUrls[category];
+    pageUrl += "/?start=${pageNumber * categoryPageLengths[category]}";
+    pageUrl += "&type=rss&format=feed";
+
+    http.Response response;
+    try {
+      response = await http.get(Uri.parse(pageUrl));
+    } catch (e) {
+      print(e);
+      return null;
+    }
 
     RssFeed feed = RssFeed.parse(response.body);
 
@@ -30,8 +48,17 @@ class LoadData {
     return {'titles': titles, 'imgSrcs': imgSrcs, 'articleSrcs': articleSrcs};
   }
 
-  static Future<List<String?>> loadArticle({required String src, required bool hasImg}) async {
-    http.Response response = await http.get(Uri.parse(src));
+  static Future<List<String?>?> loadArticle({
+    required String src,
+    required bool hasImg
+  }) async {
+    http.Response response;
+    try {
+      response = await http.get(Uri.parse(src));
+    } catch (e) {
+      print(e);
+      return null;
+    }
 
     dom.Document document = parse(response.body);
 

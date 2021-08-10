@@ -12,7 +12,10 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   RefreshController _refreshController = RefreshController(initialRefresh: false);
+
   int pageNumber = 0;
+  int currentCategory = 0; // default -> home
+
   List<String?> titles = [];
   List<String?> imgSrcs = [];
   List<String?> articleSrcs = [];
@@ -25,30 +28,40 @@ class _HomeState extends State<Home> {
 
   void _onRefresh() async {
     pageNumber = 0;
-    var newItems = await LoadData.loadArticlePage(pageNumber: pageNumber);
+    Map<String, List<String?>>? newItems;
+
+    while (newItems == null) {
+      newItems = await LoadData.loadArticlePage(
+        pageNumber: pageNumber,
+        category: currentCategory
+      );
+    }
 
     titles = newItems['titles']!;
     imgSrcs = newItems['imgSrcs']!;
     articleSrcs = newItems['articleSrcs']!;
 
-    if(mounted) {
-      setState(() {});
-    }
+    if(mounted) setState(() {});
 
     _refreshController.refreshCompleted();
   }
 
   void _onLoading() async {
     pageNumber++;
-    var newItems = await LoadData.loadArticlePage(pageNumber: pageNumber);
+    Map<String, List<String?>>? newItems;
+
+    while (newItems == null) {
+      newItems = await LoadData.loadArticlePage(
+        pageNumber: pageNumber,
+        category: currentCategory
+      );
+    }
 
     titles.addAll(newItems['titles']!);
     imgSrcs.addAll(newItems['imgSrcs']!);
     articleSrcs.addAll(newItems['articleSrcs']!);
 
-    if(mounted) {
-      setState(() {});
-    }
+    if(mounted) setState(() {});
 
     _refreshController.loadComplete();
   }
@@ -65,16 +78,6 @@ class _HomeState extends State<Home> {
 
     return Scaffold(
         appBar: AppBar(
-          // backwardsCompatibility: false,
-          // systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.white),
-          iconTheme: IconThemeData(color: Colors.black),
-          leading: IconButton(
-            icon: Icon(Icons.menu_outlined),
-            onPressed: () {
-
-            },
-            iconSize: 30,
-          ),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -89,6 +92,62 @@ class _HomeState extends State<Home> {
           titleSpacing: 5,
           backgroundColor: Colors.white,
           elevation: 0,
+        ),
+        drawer: Container(
+          width: 250,
+          child: Drawer(
+            child: ListView(
+              itemExtent: 45.0,
+              children:
+                // TODO: search bar
+                <Widget>[SizedBox(height: 50)] + // search bar placeholder
+                List.generate(9, (index) {
+                  List<String> tileNames = [
+                    "Home", "Știri", "Tehnologie",
+                    "Fizică", "Univers", "Biologie",
+                    "Humanus", "Bloguri", "Setări"
+                  ];
+                  List<IconData> tileIcons = [
+                    Icons.home, Icons.feed, Icons.build,
+                    Icons.science, Icons.auto_awesome, Icons.biotech,
+                    Icons.psychology, Icons.people, Icons.settings
+                  ];
+
+                  return ListTile(
+                    leading: Icon(tileIcons[index]),
+                    title: Text(tileNames[index]),
+                    selected: currentCategory == index,
+                    onTap: () async {
+                      if (currentCategory != index) {
+                        print("Switching to " + tileNames[index]);
+
+                        pageNumber = 0;
+                        currentCategory = index;
+
+                        Map<String, List<String?>>? newItems;
+
+                        while (newItems == null) {
+                          newItems = await LoadData.loadArticlePage(
+                              pageNumber: pageNumber,
+                              category: currentCategory
+                          );
+                        }
+
+                        titles = newItems['titles']!;
+                        imgSrcs = newItems['imgSrcs']!;
+                        articleSrcs = newItems['articleSrcs']!;
+
+                        setState(() {});
+
+                        Navigator.pop(context);
+
+                        print("Done!");
+                      }
+                    },
+                  );
+                })
+            ),
+          ),
         ),
         body: SmartRefresher(
           enablePullDown: true,
@@ -114,7 +173,6 @@ class _HomeState extends State<Home> {
                               title: titles[index]!,
                               img: (imgSrcs[index] != null) ? CachedNetworkImage(
                                 imageUrl: imgSrcs[index]!,
-                                //placeholder: (context, url) => CircularProgressIndicator(),
                                 fit: BoxFit.cover
                               ) : null,
                               index: index
@@ -131,7 +189,6 @@ class _HomeState extends State<Home> {
                             tag: "articleImg" + index.toString(),
                             child: CachedNetworkImage(
                               imageUrl: imgSrcs[index]!,
-                              //placeholder: (context, url) => CircularProgressIndicator(),
                               fit: BoxFit.cover
                             ),
                           )

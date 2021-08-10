@@ -10,7 +10,12 @@ class Loading extends StatefulWidget {
 
 class _LoadingState extends State<Loading> {
   void loadData() async {
-    final data = await LoadData.loadArticlePage(pageNumber: 0);
+    Map<String, List<String?>>? data;
+
+    while (data == null) {
+      data = await LoadData.loadArticlePage(pageNumber: 0, category: 0);
+    }
+
     Navigator.pushReplacementNamed(context, '/home', arguments: data);
   }
 

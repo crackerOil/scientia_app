@@ -15,16 +15,25 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+
     return MaterialApp(
       title: 'Scientia App',
       theme: ThemeData(
-        // primarySwatch: Colors.blue,
+        appBarTheme: AppBarTheme(
+          backwardsCompatibility: false,
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Colors.white,
+            statusBarBrightness: Brightness.light, // IOS
+            statusBarIconBrightness: Brightness.dark, // Android
+          ),
+          iconTheme: IconThemeData(color: Colors.black),
+        ),
       ),
-      // initialRoute: '/home',
       routes: {
         '/': (context) => Loading(),
         '/home': (context) => Home(),
       },
+      debugShowCheckedModeBanner: false,
     );
   }
 }

@@ -19,27 +19,23 @@ class Article extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ArticleState createState() => _ArticleState(src, title, img, index);
+  _ArticleState createState() => _ArticleState();
 }
 
 class _ArticleState extends State<Article> {
-  final String src;
-  final String title;
-  final CachedNetworkImage? img;
-  final int index;
-
   late String articleDetails;
   String? articleHtml;
 
   List<YoutubePlayerController> videoControllers = [];
 
-  _ArticleState(this.src, this.title, this.img, this.index);
-
   void loadArticleText() async {
     List<String?>? article;
 
     while (article == null) {
-      article = await LoadData.loadArticle(src: src, hasImg: (img != null));
+      article = await LoadData.loadArticle(
+          src: widget.src,
+          hasImg: (widget.img != null)
+      );
     }
 
     String? author = article[0];
@@ -93,10 +89,10 @@ class _ArticleState extends State<Article> {
       ),
       body: ListView(
         children: [
-          (img != null)
+          (widget.img != null)
               ? Hero(
-                  tag: "articleImg" + index.toString(),
-                  child: img!,
+                  tag: "articleImg" + widget.index.toString(),
+                  child: widget.img!,
                 )
               : SizedBox(height: 1),
           (articleHtml == null)
@@ -115,7 +111,7 @@ class _ArticleState extends State<Article> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                      child: Text(title,
+                      child: Text(widget.title,
                           style: TextStyle(
                             color: Colors.black87,
                             fontFamily: 'Helvetica',
@@ -149,6 +145,7 @@ class _ArticleState extends State<Article> {
                               )!,
                               flags: YoutubePlayerFlags(
                                 autoPlay: false,
+                                hideThumbnail: true,
                               )
                           );
                           videoControllers.add(_controller);
@@ -171,11 +168,12 @@ class _ArticleState extends State<Article> {
                       customImageRenders: {
                         // prefix relative paths with base url
                         (attr, _) =>
-                                attr["src"] != null &&
-                                attr["src"] != img!.imageUrl.substring(23) &&
-                                attr["src"]!.startsWith("/images"):
+                          attr["src"] != null &&
+                          attr["src"] != widget.img!.imageUrl.substring(23) &&
+                          attr["src"]!.startsWith("/images"):
                             networkImageRender(
-                                mapUrl: (url) => "https://scientia.ro" + url!),
+                                mapUrl: (url) => "https://scientia.ro" + url!
+                            ),
                       },
                       style: {
                         "a": Style(

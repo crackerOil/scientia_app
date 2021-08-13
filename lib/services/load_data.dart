@@ -90,4 +90,8 @@ class LoadData {
       articleBody.innerHtml
     ];
   }
+
+  static Future<void> loadSearchQuery({ required String searchQuery }) async {
+    await Future.delayed(Duration(seconds: 2));
+  }
 }

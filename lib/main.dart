@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:scientia_app/screens/loading.dart';
 import 'package:scientia_app/screens/home.dart';
 
 void main() {
@@ -29,10 +28,7 @@ class MyApp extends StatelessWidget {
           iconTheme: IconThemeData(color: Colors.black),
         ),
       ),
-      routes: {
-        '/': (context) => Loading(),
-        '/home': (context) => Home(),
-      },
+      home: Home(),
       debugShowCheckedModeBanner: false,
     );
   }

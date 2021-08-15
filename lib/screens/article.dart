@@ -169,7 +169,7 @@ class _ArticleState extends State<Article> {
                         // prefix relative paths with base url
                         (attr, _) =>
                           attr["src"] != null &&
-                          attr["src"] != widget.img!.imageUrl.substring(23) &&
+                          attr["src"] != widget.img?.imageUrl.substring(23) &&
                           attr["src"]!.startsWith("/images"):
                             networkImageRender(
                                 mapUrl: (url) => "https://scientia.ro" + url!

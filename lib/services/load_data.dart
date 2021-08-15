@@ -91,7 +91,30 @@ class LoadData {
     ];
   }
 
-  static Future<void> loadSearchQuery({ required String searchQuery }) async {
-    await Future.delayed(Duration(seconds: 2));
+  static Future<Map<String, List<String?>>?> loadSearchQuery({
+    required String searchQuery
+  }) async {
+    String searchUrl = "https://scientia.ro/component/finder/search.feed?t[0]=18&q=$searchQuery&type=rss";
+
+    http.Response response;
+    try {
+      response = await http.get(Uri.parse(searchUrl));
+    } catch (e) {
+      print(e);
+      return null;
+    }
+
+    RssFeed searchFeed = RssFeed.parse(response.body);
+
+    List<RssItem>? searchItems = searchFeed.items;
+
+    if (searchItems!.isEmpty) {
+      return null;
+    }
+
+    List<String?> titles = searchItems.map((item) => item.title).toList();
+    List<String?> articleSrcs = searchItems.map((item) => item.link).toList();
+
+    return {"titles": titles, "articleSrcs": articleSrcs};
   }
 }

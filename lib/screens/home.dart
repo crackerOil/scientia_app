@@ -108,8 +108,8 @@ class _HomeState extends State<Home> {
           ),
         ),
         body: InheritedDataWidget(
-          data: _currentCategory,
-          child: (_searchQuery.isEmpty) ? HomeWidget() : SearchWidget(searchQuery: _searchQuery)
+          data: (_searchQuery.isEmpty) ? _currentCategory : _searchQuery,
+          child: (_searchQuery.isEmpty) ? HomeWidget() : SearchWidget()
         )
     );
   }

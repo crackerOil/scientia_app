@@ -83,9 +83,6 @@ class _ArticleState extends State<Article> {
             ),
           ],
         ),
-        titleSpacing: 5,
-        backgroundColor: Colors.white,
-        elevation: 0,
       ),
       body: ListView(
         children: [
@@ -100,10 +97,8 @@ class _ArticleState extends State<Article> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SizedBox(height: 20),
+                      SizedBox(height: 25),
                       CircularProgressIndicator(),
-                      SizedBox(height: 10),
-                      Text("loading"),
                     ],
                   ),
                 )
@@ -111,13 +106,10 @@ class _ArticleState extends State<Article> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                      child: Text(widget.title,
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontFamily: 'Helvetica',
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                          )),
+                      child: Text(
+                        widget.title,
+                        style: Theme.of(context).textTheme.headline6
+                      ),
                     ),
                     Html(data: articleDetails, style: {
                       "div": Style(
@@ -129,7 +121,6 @@ class _ArticleState extends State<Article> {
                     }),
                     Divider(
                       height: 2,
-                      color: Colors.black54,
                       indent: 10,
                       endIndent: 10,
                     ),

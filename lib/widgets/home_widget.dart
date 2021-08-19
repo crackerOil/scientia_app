@@ -109,7 +109,6 @@ class _HomeWidgetState extends State<HomeWidget> {
                                 src: _articleSrcs[index]!,
                                 title: _titles[index]!,
                                 img: (() {
-                                  print(_imgSrcs[index]);
                                   if (_imgSrcs[index] == null) {
                                     return null;
                                   } else if (_imgSrcs[index]!.contains("youtube")) {
@@ -153,12 +152,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                         padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                         child: Text(
                             _titles[index]!,
-                            style: TextStyle(
-                              color: Color(0xff1f738b),
-                              fontFamily: 'Helvetica',
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold,
-                            )
+                            style: Theme.of(context).textTheme.headline6
                         ),
                       ),
                     ],

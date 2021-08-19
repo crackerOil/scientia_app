@@ -31,9 +31,6 @@ class _HomeState extends State<Home> {
               ),
             ],
           ),
-          titleSpacing: 5,
-          backgroundColor: Colors.white,
-          elevation: 0,
         ),
         drawer: Container(
           width: 250,
@@ -45,7 +42,6 @@ class _HomeState extends State<Home> {
                   child: ListView(
                     itemExtent: 45.0,
                     children:
-                      // TODO: search bar
                       <Widget>[
                         TextField(
                           controller: _searchController,

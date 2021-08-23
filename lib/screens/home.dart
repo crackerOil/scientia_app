@@ -83,7 +83,7 @@ class _HomeState extends State<Home> {
                           selected: _currentCategory == index,
                           onTap: () async {
                             if (_currentCategory != index) {
-                              print("Switching to ${tileNames[index]}");
+                              print("Switching to '${tileNames[index]}'");
 
                               setState(() {
                                 _currentCategory = index;

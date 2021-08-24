@@ -1,18 +1,12 @@
 import "package:flutter/material.dart";
 import 'package:flutter/services.dart';
 import 'package:scientia_app/screens/home.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 
 class ScientiaApp extends StatelessWidget {
   ScientiaApp({Key? key}) : super(key: key);
 
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-
   @override
   Widget build(BuildContext context) {
-    _firebaseMessaging.subscribeToTopic("Notifications");
-    print("subscribed to 'Notifications' stream");
-
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,

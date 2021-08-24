@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scientia_app/screens/article.dart';
 import 'package:scientia_app/services/load_data.dart';
+import 'package:scientia_app/services/notification_manager.dart';
 import 'package:scientia_app/widgets/inherited_data_widget.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -75,6 +76,38 @@ class _HomeWidgetState extends State<HomeWidget> {
     _refreshController.loadComplete();
   }
 
+  void goToArticle(BuildContext context, int index) {
+    Navigator.push(context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation1, animation2) {
+            return Article(
+              src: _articleSrcs[index]!,
+              title: _titles[index]!,
+              img: (() {
+                if (_imgSrcs[index] == null) {
+                  return null;
+                } else if (_imgSrcs[index]!.contains("youtube")) {
+                  return CachedNetworkImage(
+                      imageUrl: "https://img.youtube.com/vi/${YoutubePlayer
+                          .convertUrlToId(
+                          _imgSrcs[index]!)!}/hqdefault.jpg",
+                      fit: BoxFit.cover
+                  );
+                } else {
+                  return CachedNetworkImage(
+                      imageUrl: _imgSrcs[index]!,
+                      fit: BoxFit.cover
+                  );
+                }
+              })(),
+              index: index
+            );
+          },
+          // transitionDuration: Duration(seconds: 0),
+        )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final InheritedDataWidget? inheritedWidget = InheritedDataWidget.of(context);
@@ -84,6 +117,14 @@ class _HomeWidgetState extends State<HomeWidget> {
 
       _loading = true;
       reloadData();
+    }
+
+    // navigate to new article if opened from notification
+    if (NotificationManager().openedFromNotification && !_loading) {
+      NotificationManager().openedFromNotification = false;
+
+      Future.delayed(Duration(milliseconds: 500));
+      Future.microtask(() => goToArticle(context, 0));
     }
 
     return (_loading) ? Center(child: CircularProgressIndicator()) : SmartRefresher(
@@ -101,35 +142,7 @@ class _HomeWidgetState extends State<HomeWidget> {
               padding: const EdgeInsets.all(4.0),
               child: Card(
                 child: InkWell(
-                  onTap: () {
-                    Navigator.push(context,
-                        PageRouteBuilder(
-                          pageBuilder: (context, animation1, animation2) {
-                            return Article(
-                                src: _articleSrcs[index]!,
-                                title: _titles[index]!,
-                                img: (() {
-                                  if (_imgSrcs[index] == null) {
-                                    return null;
-                                  } else if (_imgSrcs[index]!.contains("youtube")) {
-                                    return CachedNetworkImage(
-                                        imageUrl: "https://img.youtube.com/vi/${YoutubePlayer.convertUrlToId(_imgSrcs[index]!)!}/hqdefault.jpg",
-                                        fit: BoxFit.cover
-                                    );
-                                  } else {
-                                    return CachedNetworkImage(
-                                      imageUrl: _imgSrcs[index]!,
-                                      fit: BoxFit.cover
-                                    );
-                                  }
-                                })(),
-                                index: index
-                            );
-                          },
-                          //transitionDuration: Duration(seconds: 0),
-                        )
-                    );
-                  },
+                  onTap: () => goToArticle(context, index),
                   child: Column(
                     children: [
                       (_imgSrcs[index] != null) ? Hero(

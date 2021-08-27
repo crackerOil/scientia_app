@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:scientia_app/screens/article.dart';
 import 'package:scientia_app/services/load_data.dart';
 import 'package:scientia_app/services/notification_manager.dart';
 import 'package:scientia_app/widgets/inherited_data_widget.dart';
@@ -77,35 +76,28 @@ class _HomeWidgetState extends State<HomeWidget> {
   }
 
   void goToArticle(BuildContext context, int index) {
-    Navigator.push(context,
-        PageRouteBuilder(
-          pageBuilder: (context, animation1, animation2) {
-            return Article(
-              src: _articleSrcs[index]!,
-              title: _titles[index]!,
-              img: (() {
-                if (_imgSrcs[index] == null) {
-                  return null;
-                } else if (_imgSrcs[index]!.contains("youtube")) {
-                  return CachedNetworkImage(
-                      imageUrl: "https://img.youtube.com/vi/${YoutubePlayer
-                          .convertUrlToId(
-                          _imgSrcs[index]!)!}/hqdefault.jpg",
-                      fit: BoxFit.cover
-                  );
-                } else {
-                  return CachedNetworkImage(
-                      imageUrl: _imgSrcs[index]!,
-                      fit: BoxFit.cover
-                  );
-                }
-              })(),
-              index: index
-            );
-          },
-          // transitionDuration: Duration(seconds: 0),
-        )
-    );
+    Navigator.pushNamed(context, '/article', arguments: {
+      'src': _articleSrcs[index]!,
+      'title': _titles[index]!,
+      'img': (() {
+        if (_imgSrcs[index] == null) {
+          return null;
+        } else if (_imgSrcs[index]!.contains("youtube")) {
+          return CachedNetworkImage(
+              imageUrl: "https://img.youtube.com/vi/${YoutubePlayer
+                  .convertUrlToId(
+                  _imgSrcs[index]!)!}/hqdefault.jpg",
+              fit: BoxFit.cover
+          );
+        } else {
+          return CachedNetworkImage(
+              imageUrl: _imgSrcs[index]!,
+              fit: BoxFit.cover
+          );
+        }
+      })(),
+      'index': index
+    });
   }
 
   @override

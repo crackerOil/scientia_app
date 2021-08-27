@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:scientia_app/scientia_app.dart';
 import 'package:scientia_app/services/notification_manager.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await NotificationManager().init();
+
   runApp(MyApp());
 }
 
@@ -18,8 +21,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-
-    NotificationManager().init();
 
     // handle opening app (background) from notification
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {

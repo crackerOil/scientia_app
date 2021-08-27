@@ -33,73 +33,96 @@ class _HomeState extends State<Home> {
           ),
         ),
         drawer: Container(
-          width: 250,
-          child: Drawer(
-            child: Column(
-              children: [
-                const SizedBox(height: 18),
-                Expanded(
-                  child: ListView(
-                    itemExtent: 45.0,
-                    children:
-                      <Widget>[
-                        TextField(
-                          controller: _searchController,
-                          decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.search),
-                            hintText: 'Caută...'
+          width: 200,
+          child: Theme(
+            data: Theme.of(context).copyWith(
+              canvasColor: Color(0xff07313b),
+            ),
+            child: Drawer(
+              child: Column(
+                children: [
+                  const SizedBox(height: 15),
+                  Expanded(
+                    child: ListView(
+                      itemExtent: 45.0,
+                      children:
+                        <Widget>[
+                          TextField(
+                            controller: _searchController,
+                            style: TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.white70),
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.blue),
+                              ),
+                              prefixIcon: Icon(Icons.search, color: Colors.white),
+                              hintText: 'Caută...',
+                              hintStyle: TextStyle(color: Colors.white60)
+                            ),
+                            onSubmitted: (input) {
+                              if (input.isNotEmpty) {
+                                print("Searching for '$input'...");
+
+                                setState(() {
+                                  _currentCategory = -1;
+                                  _searchQuery = input;
+                                });
+
+                                _searchController.clear();
+
+                                Navigator.pop(context);
+                              }
+                            }
                           ),
-                          onSubmitted: (input) {
-                            if (input.isNotEmpty) {
-                              print("Searching for '$input'...");
+                        ]
+                        ..addAll(List<Widget>.generate(9, (index) {
+                          List<String> tileNames = [
+                            "Home", "Știri", "Tehnologie",
+                            "Fizică", "Univers", "Biologie",
+                            "Humanus", "Bloguri", "Setări"
+                          ];
+                          List<IconData> tileIcons = [
+                            Icons.home, Icons.feed, Icons.build,
+                            Icons.science, Icons.auto_awesome, Icons.biotech,
+                            Icons.psychology, Icons.people, Icons.settings
+                          ];
 
-                              setState(() {
-                                _currentCategory = -1;
-                                _searchQuery = input;
-                              });
+                          return ListTile(
+                            leading: Icon(
+                              tileIcons[index],
+                              color: (_currentCategory != index) ? Colors.white : null
+                            ),
+                            title: Text(
+                              tileNames[index],
+                              style: (_currentCategory != index) ? TextStyle(color: Colors.white) : null
+                            ),
+                            selected: _currentCategory == index,
+                            onTap: () async {
+                              if (_currentCategory != index) {
+                                print("Switching to '${tileNames[index]}'");
 
-                              _searchController.clear();
+                                Navigator.pop(context);
 
-                              Navigator.pop(context);
-                            }
-                          }
-                        ),
-                      ]
-                      ..addAll(List<Widget>.generate(9, (index) {
-                        List<String> tileNames = [
-                          "Home", "Știri", "Tehnologie",
-                          "Fizică", "Univers", "Biologie",
-                          "Humanus", "Bloguri", "Setări"
-                        ];
-                        List<IconData> tileIcons = [
-                          Icons.home, Icons.feed, Icons.build,
-                          Icons.science, Icons.auto_awesome, Icons.biotech,
-                          Icons.psychology, Icons.people, Icons.settings
-                        ];
+                                if (index != 8) {
+                                  setState(() {
+                                    _currentCategory = index;
+                                    _searchQuery = "";
+                                  });
+                                } else {
+                                  Navigator.pushNamed(context, '/settings');
+                                }
 
-                        return ListTile(
-                          leading: Icon(tileIcons[index]),
-                          title: Text(tileNames[index]),
-                          selected: _currentCategory == index,
-                          onTap: () async {
-                            if (_currentCategory != index) {
-                              print("Switching to '${tileNames[index]}'");
-
-                              setState(() {
-                                _currentCategory = index;
-                                _searchQuery = "";
-                              });
-
-                              Navigator.pop(context);
-
-                              print("Done!");
-                            }
-                          },
-                        );
-                      }))
+                                print("Done!");
+                              }
+                            },
+                          );
+                        }))
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:scientia_app/screens/article.dart';
 import 'package:scientia_app/services/load_data.dart';
 
 import 'inherited_data_widget.dart';
@@ -107,18 +106,12 @@ class _SearchWidgetState extends State<SearchWidget> {
                       ),
                     ),
                     onTap: () {
-                      Navigator.push(context,
-                          PageRouteBuilder(
-                            pageBuilder: (context, animation1, animation2) {
-                              return Article(
-                                  src: _articleSrcs[index]!,
-                                  title: _titles[index]!,
-                                  img: null,
-                                  index: index
-                              );
-                            },
-                          )
-                      );
+                      Navigator.pushNamed(context, '/article', arguments: {
+                        'src': _articleSrcs[index]!,
+                        'title': _titles[index]!,
+                        'img': null,
+                        'index': index
+                      });
                     },
                   );
                 }

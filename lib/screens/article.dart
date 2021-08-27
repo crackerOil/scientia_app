@@ -5,24 +5,18 @@ import 'package:scientia_app/services/load_data.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class Article extends StatefulWidget {
-  final String src;
-  final String title;
-  final CachedNetworkImage? img;
-  final int index;
-
-  const Article({
-    Key? key,
-    required this.src,
-    required this.title,
-    required this.img,
-    required this.index,
-  }) : super(key: key);
+  const Article({Key? key}) : super(key: key);
 
   @override
   _ArticleState createState() => _ArticleState();
 }
 
 class _ArticleState extends State<Article> {
+  late final String src;
+  late final String title;
+  late final CachedNetworkImage? img;
+  late final int index;
+
   late String articleDetails;
   String? articleHtml;
 
@@ -33,8 +27,8 @@ class _ArticleState extends State<Article> {
 
     while (article == null) {
       article = await LoadData.loadArticle(
-          src: widget.src,
-          hasImg: (widget.img != null)
+          src: src,
+          hasImg: (img != null)
       );
     }
 
@@ -52,13 +46,6 @@ class _ArticleState extends State<Article> {
   }
 
   @override
-  void initState() {
-    super.initState();
-
-    loadArticleText();
-  }
-
-  @override
   void dispose() {
     if (videoControllers.isNotEmpty) {
       videoControllers.forEach((controller) {
@@ -71,6 +58,16 @@ class _ArticleState extends State<Article> {
 
   @override
   Widget build(BuildContext context) {
+    if (articleHtml == null) {
+      Map initialParams = ModalRoute.of(context)!.settings.arguments as Map;
+      src = initialParams['src'];
+      title = initialParams['title'];
+      img = initialParams['img'];
+      index = initialParams['index'];
+
+      loadArticleText();
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -86,10 +83,10 @@ class _ArticleState extends State<Article> {
       ),
       body: ListView(
         children: [
-          (widget.img != null)
+          (img != null)
               ? Hero(
-                  tag: "articleImg" + widget.index.toString(),
-                  child: widget.img!,
+                  tag: "articleImg" + index.toString(),
+                  child: img!,
                 )
               : SizedBox(height: 1),
           (articleHtml == null)
@@ -102,78 +99,81 @@ class _ArticleState extends State<Article> {
                     ],
                   ),
                 )
-              : Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                      child: Text(
-                        widget.title,
-                        style: Theme.of(context).textTheme.headline6
+              : Padding(
+                padding: const EdgeInsets.all(3),
+                child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 7, right: 7),
+                        child: Text(
+                          title,
+                          style: Theme.of(context).textTheme.headline6
+                        ),
                       ),
-                    ),
-                    Html(data: articleDetails, style: {
-                      "div": Style(
-                        color: Colors.grey[700],
-                      ),
-                      "a": Style(
-                        textDecoration: TextDecoration.none,
-                      )
-                    }),
-                    Divider(
-                      height: 2,
-                      indent: 10,
-                      endIndent: 10,
-                    ),
-                    // TODO: make links work
-                    // TODO: improve videos (later)
-                    Html(
-                      data: articleHtml,
-                      customRender: {
-                        "iframe": (context, child) {
-                          YoutubePlayerController _controller = YoutubePlayerController(
-                              initialVideoId: YoutubePlayer.convertUrlToId(
-                                  context.tree.element!.attributes["src"]!
-                              )!,
-                              flags: YoutubePlayerFlags(
-                                autoPlay: false,
-                                hideThumbnail: true,
-                              )
-                          );
-                          videoControllers.add(_controller);
-
-                          return YoutubePlayer(
-                            controller: _controller,
-                            showVideoProgressIndicator: true,
-                            bottomActions: <Widget>[
-                              const SizedBox(width: 10),
-                              CurrentPosition(),
-                              const SizedBox(width: 10),
-                              ProgressBar(isExpanded: true),
-                              const SizedBox(width: 10),
-                              RemainingDuration(),
-                              const SizedBox(width: 10)
-                            ],
-                          );
-                        }
-                      },
-                      customImageRenders: {
-                        // prefix relative paths with base url
-                        (attr, _) =>
-                          attr["src"] != null &&
-                          attr["src"] != widget.img?.imageUrl.substring(23) &&
-                          attr["src"]!.startsWith("/images"):
-                            networkImageRender(
-                                mapUrl: (url) => "https://scientia.ro" + url!
-                            ),
-                      },
-                      style: {
+                      Html(data: articleDetails, style: {
+                        "div": Style(
+                          color: Colors.grey[700],
+                        ),
                         "a": Style(
                           textDecoration: TextDecoration.none,
-                        ),
-                      },
-                    ),
-                  ],
-                ),
+                        )
+                      }),
+                      Divider(
+                        height: 2,
+                        indent: 10,
+                        endIndent: 10,
+                      ),
+                      // TODO: make links work
+                      // TODO: improve videos (later)
+                      Html(
+                        data: articleHtml,
+                        customRender: {
+                          "iframe": (context, child) {
+                            YoutubePlayerController _controller = YoutubePlayerController(
+                                initialVideoId: YoutubePlayer.convertUrlToId(
+                                    context.tree.element!.attributes["src"]!
+                                )!,
+                                flags: YoutubePlayerFlags(
+                                  autoPlay: false,
+                                  hideThumbnail: true,
+                                )
+                            );
+                            videoControllers.add(_controller);
+
+                            return YoutubePlayer(
+                              controller: _controller,
+                              showVideoProgressIndicator: true,
+                              bottomActions: <Widget>[
+                                const SizedBox(width: 10),
+                                CurrentPosition(),
+                                const SizedBox(width: 10),
+                                ProgressBar(isExpanded: true),
+                                const SizedBox(width: 10),
+                                RemainingDuration(),
+                                const SizedBox(width: 10)
+                              ],
+                            );
+                          }
+                        },
+                        customImageRenders: {
+                          // prefix relative paths with base url
+                          (attr, _) =>
+                            attr["src"] != null &&
+                            attr["src"] != img?.imageUrl.substring(23) &&
+                            attr["src"]!.startsWith("/images"):
+                              networkImageRender(
+                                  mapUrl: (url) => "https://scientia.ro" + url!
+                              ),
+                        },
+                        style: {
+                          "a": Style(
+                            textDecoration: TextDecoration.none,
+                          ),
+                        },
+                      ),
+                    ],
+                  ),
+              ),
         ],
       ),
     );

@@ -60,9 +60,9 @@ class _SettingsState extends State<Settings> {
                     value: Theme.of(context).brightness == Brightness.dark,
                     onChanged: (bool value) {
                       if (value) {
-                        ScientiaApp.of(context)!.changeTheme(ThemeMode.dark);
+                        ScientiaApp.of(context)!.themeMode = ThemeMode.dark;
                       } else {
-                        ScientiaApp.of(context)!.changeTheme(ThemeMode.light);
+                        ScientiaApp.of(context)!.themeMode = ThemeMode.light;
                       }
                     },
                   ),

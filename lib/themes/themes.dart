@@ -10,19 +10,16 @@ class ScientiaThemes {
         backgroundColor: Colors.white,
         titleSpacing: 5,
         elevation: 0,
-        backwardsCompatibility: false,
-        systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: Colors.white,
-          statusBarBrightness: Brightness.light, // IOS
-          statusBarIconBrightness: Brightness.dark, // Android
-        ),
         iconTheme: IconThemeData(color: Colors.black),
       ),
-      textTheme: const TextTheme(
+      textTheme: TextTheme(
         subtitle1: TextStyle(
           color: Colors.black,
           fontFamily: 'Helvetica',
           fontSize: 20,
+        ),
+        subtitle2: TextStyle(
+            color: Colors.black54
         ),
         headline5: TextStyle(
           color: Colors.black,
@@ -40,8 +37,34 @@ class ScientiaThemes {
     );
   }
 
-  // TODO: nice dark theme
   static ThemeData get dark {
-    return ThemeData.dark();
+    return ThemeData(
+      brightness: Brightness.dark,
+      dividerColor: Colors.white70,
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.black26,
+        titleSpacing: 5,
+        elevation: 0,
+      ),
+      textTheme: const TextTheme(
+        subtitle1: TextStyle(
+          color: Colors.white,
+          fontFamily: 'Helvetica',
+          fontSize: 20,
+        ),
+        headline5: TextStyle(
+          color: Colors.white,
+          fontFamily: 'Helvetica',
+          fontSize: 23,
+          fontWeight: FontWeight.bold,
+        ),
+        headline6: TextStyle(
+          color: Colors.white70,
+          fontFamily: 'Helvetica',
+          fontSize: 25,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
   }
 }

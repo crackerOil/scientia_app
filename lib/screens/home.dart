@@ -3,6 +3,8 @@ import 'package:scientia_app/widgets/home_widget.dart';
 import 'package:scientia_app/widgets/inherited_data_widget.dart';
 import 'package:scientia_app/widgets/search_widget.dart';
 
+import '../scientia_app.dart';
+
 class Home extends StatefulWidget {
   Home({Key? key}) : super(key: key);
 
@@ -23,9 +25,12 @@ class _HomeState extends State<Home> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
+              const SizedBox(width: 80),
               Flexible(
                 child: Image(
-                    image: AssetImage('assets/logo-scientia-ns.png'),
+                    image: (ScientiaApp.of(context)!.themeMode == ThemeMode.dark)
+                        ? AssetImage('assets/logo-scientia-dark.png')
+                        : AssetImage('assets/logo-scientia.png'),
                     fit: BoxFit.cover
                 ),
               ),
@@ -101,20 +106,20 @@ class _HomeState extends State<Home> {
                             selected: _currentCategory == index,
                             onTap: () async {
                               if (_currentCategory != index) {
-                                print("Switching to '${tileNames[index]}'");
-
                                 Navigator.pop(context);
 
                                 if (index != 8) {
+                                  print("Switching to '${tileNames[index]}'");
+
                                   setState(() {
                                     _currentCategory = index;
                                     _searchQuery = "";
                                   });
+
+                                  print("Done!");
                                 } else {
                                   Navigator.pushNamed(context, '/settings');
                                 }
-
-                                print("Done!");
                               }
                             },
                           );

@@ -1,4 +1,5 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:scientia_app/screens/article.dart';
@@ -21,22 +22,23 @@ class _ScientiaAppState extends State<ScientiaApp> {
   ThemeMode _themeMode = () {
     bool? darkTheme = NotificationManager().sharedPrefs.getBool('darkTheme');
 
-    if (darkTheme == null) {
-      return ThemeMode.system;
-    } else if (darkTheme) {
-      return ThemeMode.dark;
-    } else {
+    if (darkTheme == null || !darkTheme) {
       return ThemeMode.light;
+    } else {
+      return ThemeMode.dark;
     }
   }();
 
-  void changeTheme(ThemeMode themeMode) async {
+  ThemeMode get themeMode => _themeMode;
+  set themeMode(ThemeMode themeMode) {
     setState(() {
       _themeMode = themeMode;
     });
-    await NotificationManager()
-        .sharedPrefs
-        .setBool('darkTheme', themeMode == ThemeMode.dark);
+    () async {
+      await NotificationManager()
+          .sharedPrefs
+          .setBool('darkTheme', themeMode == ThemeMode.dark);
+    }();
   }
 
   @override
@@ -54,7 +56,15 @@ class _ScientiaAppState extends State<ScientiaApp> {
       routes: {
         '/': (context) => AnimatedSplashScreen(
           duration: 2000,
-          splash: Icon(Icons.home, color: (_themeMode == ThemeMode.dark) ? Colors.white : Colors.black), // TODO: get actual splash
+          splash: Container(
+            width: 300,
+            child: Image(
+              image: (_themeMode == ThemeMode.dark)
+                  ? AssetImage('assets/logo-scientia-dark.png')
+                  : AssetImage('assets/logo-scientia.png'),
+              fit: BoxFit.fitWidth
+            ),
+          ),
           nextScreen: Home(),
           splashTransition: SplashTransition.fadeTransition,
           backgroundColor: (_themeMode == ThemeMode.dark) ? Colors.black54 : Colors.white,

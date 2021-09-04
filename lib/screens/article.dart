@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:scientia_app/scientia_app.dart';
 import 'package:scientia_app/services/load_data.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -73,9 +74,12 @@ class _ArticleState extends State<Article> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
+            const SizedBox(width: 80),
             Flexible(
               child: Image(
-                  image: AssetImage('assets/logo-scientia-ns.png'),
+                  image: (ScientiaApp.of(context)!.themeMode == ThemeMode.dark)
+                      ? AssetImage('assets/logo-scientia-dark.png')
+                      : AssetImage('assets/logo-scientia.png'),
                   fit: BoxFit.cover),
             ),
           ],
@@ -112,7 +116,7 @@ class _ArticleState extends State<Article> {
                       ),
                       Html(data: articleDetails, style: {
                         "div": Style(
-                          color: Colors.grey[700],
+                          color: Theme.of(context).textTheme.subtitle2!.color,
                         ),
                         "a": Style(
                           textDecoration: TextDecoration.none,
@@ -169,7 +173,15 @@ class _ArticleState extends State<Article> {
                           "a": Style(
                             textDecoration: TextDecoration.none,
                           ),
-                        },
+                        }..addAll(() {
+                          return (ScientiaApp.of(context)!.themeMode == ThemeMode.dark)
+                              ? <String, Style>{
+                                "span": Style(
+                                  color: Colors.white
+                                )
+                              }
+                              : <String, Style>{};
+                        }()),
                       ),
                     ],
                   ),
